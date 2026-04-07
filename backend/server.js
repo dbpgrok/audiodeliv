@@ -18,6 +18,12 @@ app.use(express.static(path.join(__dirname, '..')));
 app.use(cors());
 app.use(express.json());
 
+// 🟢 DEBUG TOUTES les requêtes
+app.use((req, res, next) => {
+  console.log(`📡 ${req.method} ${req.path} - ${new Date().toISOString()}`);
+  next();
+});
+
 // STRIPE
 const stripeKey = process.env.STRIPE_SECRET_KEY;
 if (!stripeKey) {
