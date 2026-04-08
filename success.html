@@ -50,30 +50,33 @@
     .card {
       position: relative;
       background: var(--bg-card);
-      border: 1px solid rgba(78, 173, 107, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.06);
       border-radius: var(--radius);
       padding: 48px 40px;
-      max-width: 480px;
-      width: 90%;
+      max-width: 500px;
+      width: 92%;
       text-align: center;
     }
 
+    /* ── Icons ── */
     .icon-circle {
       width: 72px;
       height: 72px;
       border-radius: 50%;
-      background: var(--green-dim);
       display: flex;
       align-items: center;
       justify-content: center;
       margin: 0 auto 24px;
     }
-
-    .icon-circle svg {
-      width: 36px;
-      height: 36px;
-      color: var(--green);
-    }
+    .icon-circle svg { width: 36px; height: 36px; }
+    .icon-success { background: var(--green-dim); }
+    .icon-success svg { color: var(--green); }
+    .icon-loading { background: rgba(212, 168, 67, 0.1); }
+    .icon-loading svg { color: var(--gold); }
+    .icon-warn { background: rgba(212, 168, 67, 0.1); }
+    .icon-warn svg { color: var(--gold); }
+    .icon-error { background: rgba(224, 82, 82, 0.1); }
+    .icon-error svg { color: #e05252; }
 
     h1 {
       font-family: var(--font-display);
@@ -87,54 +90,58 @@
       color: var(--text-secondary);
       font-size: 0.95rem;
       line-height: 1.6;
-      margin-bottom: 28px;
-    }
-
-    .session-id {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      border-radius: var(--radius-sm);
-      padding: 10px 14px;
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      word-break: break-all;
-      margin-bottom: 28px;
-      font-family: monospace;
-    }
-
-    .session-label {
-      font-size: 0.7rem;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin-bottom: 6px;
-    }
-
-    .download-area {
-      background: rgba(212, 168, 67, 0.06);
-      border: 1px dashed rgba(212, 168, 67, 0.2);
-      border-radius: var(--radius-sm);
-      padding: 20px;
       margin-bottom: 24px;
     }
 
-    .download-area p {
-      font-size: 0.85rem;
-      color: var(--text-secondary);
-      margin-bottom: 4px;
+    /* ── Order Details ── */
+    .order-details {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      margin-bottom: 24px;
+      text-align: left;
     }
 
-    .download-area .note {
-      font-size: 0.75rem;
+    .order-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
+    }
+
+    .order-row:not(:last-child) {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .order-label {
+      font-size: 0.8rem;
       color: var(--text-muted);
     }
 
+    .order-value {
+      font-size: 0.85rem;
+      color: var(--text-primary);
+      font-weight: 500;
+      text-align: right;
+      max-width: 60%;
+      word-break: break-all;
+    }
+
+    .order-value.amount {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--gold);
+    }
+
+    /* ── Buttons ── */
     .btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      padding: 12px 28px;
+      padding: 13px 28px;
       border: none;
       border-radius: var(--radius-sm);
       font-family: var(--font-body);
@@ -144,22 +151,49 @@
       transition: all 0.2s ease;
       text-decoration: none;
     }
+    .btn svg { width: 18px; height: 18px; flex-shrink: 0; }
 
-    .btn-primary {
-      background: linear-gradient(135deg, var(--gold), var(--gold-dim));
-      color: #0a0a0f;
+    .btn-download {
+      background: linear-gradient(135deg, var(--green), #3a8f55);
+      color: #fff;
+      width: 100%;
+      margin-bottom: 12px;
+    }
+    .btn-download:hover {
+      box-shadow: 0 4px 20px rgba(78, 173, 107, 0.3);
+      background: linear-gradient(135deg, #5cc07a, var(--green));
     }
 
-    .btn-primary:hover {
-      background: linear-gradient(135deg, var(--gold-light), var(--gold));
-      box-shadow: 0 4px 20px rgba(212, 168, 67, 0.25);
+    .btn-back {
+      background: rgba(212, 168, 67, 0.1);
+      color: var(--gold);
+      border: 1px solid rgba(212, 168, 67, 0.2);
+    }
+    .btn-back:hover {
+      background: rgba(212, 168, 67, 0.18);
+      border-color: rgba(212, 168, 67, 0.35);
     }
 
-    .btn svg {
-      width: 16px;
-      height: 16px;
+    /* ── Spinner ── */
+    .spinner {
+      width: 36px;
+      height: 36px;
+      border: 3px solid rgba(212, 168, 67, 0.15);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Session reference ── */
+    .session-ref {
+      margin-top: 20px;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      word-break: break-all;
     }
 
+    /* ── Logo ── */
     .logo-link {
       display: inline-flex;
       align-items: center;
@@ -167,18 +201,15 @@
       text-decoration: none;
       color: var(--text-muted);
       font-size: 0.8rem;
-      margin-top: 24px;
+      margin-top: 20px;
       transition: color 0.2s;
     }
+    .logo-link:hover { color: var(--text-secondary); }
+    .logo-link svg { width: 20px; height: 20px; }
 
-    .logo-link:hover {
-      color: var(--text-secondary);
-    }
-
-    .logo-link svg {
-      width: 20px;
-      height: 20px;
-    }
+    /* ── States ── */
+    .state { display: none; }
+    .state.active { display: block; }
 
     @media (max-width: 480px) {
       .card { padding: 36px 24px; }
@@ -189,36 +220,118 @@
 <body>
 
   <div class="card">
-    <div class="icon-circle">
-      <svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="9 18 15 24 27 12"/>
-      </svg>
+
+    <!-- STATE: LOADING -->
+    <div class="state active" id="state-loading">
+      <div class="icon-circle icon-loading">
+        <div class="spinner"></div>
+      </div>
+      <h1>Vérification du paiement</h1>
+      <p class="subtitle">Un instant, nous confirmons votre commande...</p>
     </div>
 
-    <h1>Paiement réussi</h1>
-    <p class="subtitle">
-      Votre pack MP3 audiodeliv est prêt.<br/>
-      Merci pour votre confiance.
-    </p>
+    <!-- STATE: SUCCESS (fulfilled, download ready) -->
+    <div class="state" id="state-success">
+      <div class="icon-circle icon-success">
+        <svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 24 27 12"/>
+        </svg>
+      </div>
+      <h1>Paiement confirmé</h1>
+      <p class="subtitle">Votre pack est prêt. Téléchargez-le maintenant.</p>
 
-    <div class="download-area">
-      <p>Le lien de téléchargement vous sera envoyé par e-mail.</p>
-      <p class="note">Conservez votre référence de session ci-dessous.</p>
+      <div class="order-details" id="orderDetails">
+        <div class="order-row">
+          <span class="order-label">Produit</span>
+          <span class="order-value" id="od-product">—</span>
+        </div>
+        <div class="order-row">
+          <span class="order-label">Montant</span>
+          <span class="order-value amount" id="od-amount">—</span>
+        </div>
+        <div class="order-row">
+          <span class="order-label">Email</span>
+          <span class="order-value" id="od-email">—</span>
+        </div>
+      </div>
+
+      <a class="btn btn-download" id="downloadBtn" href="#">
+        <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 3v9m0 0l-3.5-3.5M9 12l3.5-3.5"/><path d="M3 15h12"/></svg>
+        Télécharger le pack MP3
+      </a>
+
+      <a href="/" class="btn btn-back">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M6.5 2L1 8l5.5 6M2 8h13"/></svg>
+        Retour à la boutique
+      </a>
+
+      <div class="session-ref" id="sessionRef"></div>
     </div>
 
-    <div id="sessionInfo" style="display:none;">
-      <p class="session-label">Référence de session</p>
-      <div class="session-id" id="sessionId"></div>
+    <!-- STATE: PROCESSING (webhook not yet received) -->
+    <div class="state" id="state-processing">
+      <div class="icon-circle icon-loading">
+        <div class="spinner"></div>
+      </div>
+      <h1>Traitement en cours</h1>
+      <p class="subtitle">
+        Votre paiement a été reçu.<br/>
+        La préparation de votre téléchargement est en cours, cela prend quelques secondes.
+      </p>
     </div>
 
-    <a href="/" class="btn btn-primary">
-      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l-7 7h4v6h6V8h4L8 1z"/></svg>
-      Retour à la boutique
-    </a>
+    <!-- STATE: PENDING (max retries, webhook not yet arrived) -->
+    <div class="state" id="state-pending">
+      <div class="icon-circle icon-warn">
+        <svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <circle cx="18" cy="18" r="14"/><path d="M18 11v8"/><circle cx="18" cy="25" r="1.5" fill="currentColor" stroke="none"/>
+        </svg>
+      </div>
+      <h1>Paiement en cours de vérification</h1>
+      <p class="subtitle">
+        Votre paiement a bien été envoyé. Le lien de téléchargement sera disponible sous quelques instants.<br/><br/>
+        Rechargez cette page dans 30 secondes ou vérifiez votre email.
+      </p>
+      <a href="/" class="btn btn-back">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M6.5 2L1 8l5.5 6M2 8h13"/></svg>
+        Retour à la boutique
+      </a>
+    </div>
 
+    <!-- STATE: NO SESSION -->
+    <div class="state" id="state-no-session">
+      <div class="icon-circle icon-warn">
+        <svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <circle cx="18" cy="18" r="14"/><path d="M18 11v8"/><circle cx="18" cy="25" r="1.5" fill="currentColor" stroke="none"/>
+        </svg>
+      </div>
+      <h1>Aucune commande trouvée</h1>
+      <p class="subtitle">Cette page nécessite une référence de session valide.</p>
+      <a href="/" class="btn btn-back">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M6.5 2L1 8l5.5 6M2 8h13"/></svg>
+        Retour à la boutique
+      </a>
+    </div>
+
+    <!-- STATE: ERROR -->
+    <div class="state" id="state-error">
+      <div class="icon-circle icon-error">
+        <svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
+          <line x1="12" y1="12" x2="24" y2="24"/><line x1="24" y1="12" x2="12" y2="24"/>
+        </svg>
+      </div>
+      <h1>Erreur</h1>
+      <p class="subtitle">Impossible de vérifier votre commande. Veuillez réessayer ou nous contacter.</p>
+      <a href="/" class="btn btn-back">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M6.5 2L1 8l5.5 6M2 8h13"/></svg>
+        Retour à la boutique
+      </a>
+    </div>
+
+    <!-- Logo footer -->
     <div>
       <a href="/" class="logo-link">
-        <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 36 36" fill="none">
           <rect x="2" y="2" width="32" height="32" rx="8" stroke="currentColor" stroke-width="2"/>
           <path d="M12 24V14l12-2v12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           <circle cx="12" cy="24" r="3" fill="currentColor" opacity="0.5"/>
@@ -227,15 +340,81 @@
         audiodeliv
       </a>
     </div>
+
   </div>
 
   <script>
-    const params = new URLSearchParams(window.location.search);
-    const sessionId = params.get('session_id');
-    if (sessionId) {
-      document.getElementById('sessionInfo').style.display = 'block';
-      document.getElementById('sessionId').textContent = sessionId;
+    const MAX_RETRIES = 8;
+    const RETRY_DELAY = 2000;
+    let retryCount = 0;
+
+    function showState(id) {
+      document.querySelectorAll('.state').forEach(el => el.classList.remove('active'));
+      const target = document.getElementById('state-' + id);
+      if (target) target.classList.add('active');
     }
+
+    function formatAmount(cents, currency) {
+      const amount = (cents / 100).toFixed(2).replace('.', ',');
+      const symbols = { eur: '€', usd: '$', gbp: '£' };
+      return amount + ' ' + (symbols[currency] || currency.toUpperCase());
+    }
+
+    async function checkOrderStatus() {
+      const sessionId = new URLSearchParams(window.location.search).get('session_id');
+
+      if (!sessionId) {
+        showState('no-session');
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/order-status?session_id=' + encodeURIComponent(sessionId));
+        const data = await res.json();
+
+        if (data.found && data.fulfilled && data.downloadUrl) {
+          // Commande trouvée et livrée
+          document.getElementById('od-product').textContent = data.productName || 'Pack MP3';
+          document.getElementById('od-amount').textContent = formatAmount(data.amountTotal, data.currency);
+          document.getElementById('od-email').textContent = data.email || '—';
+          document.getElementById('downloadBtn').href = data.downloadUrl;
+          document.getElementById('sessionRef').textContent = 'Ref: ' + sessionId;
+          showState('success');
+          return;
+        }
+
+        if (data.found && !data.fulfilled) {
+          showState('processing');
+          if (retryCount < MAX_RETRIES) {
+            retryCount++;
+            setTimeout(checkOrderStatus, RETRY_DELAY);
+          }
+          return;
+        }
+
+        // Not found — webhook peut être en transit
+        if (!data.found && retryCount < MAX_RETRIES) {
+          retryCount++;
+          setTimeout(checkOrderStatus, RETRY_DELAY);
+          return;
+        }
+
+        // Max retries, toujours pas trouvé
+        showState('pending');
+
+      } catch (err) {
+        console.error('Erreur order-status:', err);
+        if (retryCount < MAX_RETRIES) {
+          retryCount++;
+          setTimeout(checkOrderStatus, RETRY_DELAY);
+          return;
+        }
+        showState('error');
+      }
+    }
+
+    // Lancer la vérification au chargement
+    checkOrderStatus();
   </script>
 
 </body>
