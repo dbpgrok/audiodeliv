@@ -1,14 +1,242 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
-  <title>Paiement réussi !</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Paiement réussi – audiodeliv</title>
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@400;500;700;800&f[]=satoshi@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg-deep: #08080e;
+      --bg-card: #16161f;
+      --gold: #d4a843;
+      --gold-light: #e8c76a;
+      --gold-dim: #a17e2e;
+      --text-primary: #f0ece4;
+      --text-secondary: #9a968e;
+      --text-muted: #5e5b55;
+      --green: #4ead6b;
+      --green-dim: rgba(78, 173, 107, 0.12);
+      --radius: 14px;
+      --radius-sm: 8px;
+      --font-display: 'Cabinet Grotesk', Arial, sans-serif;
+      --font-body: 'Satoshi', Arial, sans-serif;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg-deep);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 50% 40% at 50% 30%, rgba(78, 173, 107, 0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 40% at 70% 60%, rgba(212, 168, 67, 0.04) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .card {
+      position: relative;
+      background: var(--bg-card);
+      border: 1px solid rgba(78, 173, 107, 0.12);
+      border-radius: var(--radius);
+      padding: 48px 40px;
+      max-width: 480px;
+      width: 90%;
+      text-align: center;
+    }
+
+    .icon-circle {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: var(--green-dim);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+    }
+
+    .icon-circle svg {
+      width: 36px;
+      height: 36px;
+      color: var(--green);
+    }
+
+    h1 {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: var(--text-primary);
+    }
+
+    .subtitle {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin-bottom: 28px;
+    }
+
+    .session-id {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      word-break: break-all;
+      margin-bottom: 28px;
+      font-family: monospace;
+    }
+
+    .session-label {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 6px;
+    }
+
+    .download-area {
+      background: rgba(212, 168, 67, 0.06);
+      border: 1px dashed rgba(212, 168, 67, 0.2);
+      border-radius: var(--radius-sm);
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+
+    .download-area p {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+    }
+
+    .download-area .note {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 28px;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+      color: #0a0a0f;
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, var(--gold-light), var(--gold));
+      box-shadow: 0 4px 20px rgba(212, 168, 67, 0.25);
+    }
+
+    .btn svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .logo-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      margin-top: 24px;
+      transition: color 0.2s;
+    }
+
+    .logo-link:hover {
+      color: var(--text-secondary);
+    }
+
+    .logo-link svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    @media (max-width: 480px) {
+      .card { padding: 36px 24px; }
+      h1 { font-size: 1.3rem; }
+    }
+  </style>
 </head>
 <body>
-  <h1>🎉 Merci pour votre achat !</h1>
-  <p>Votre Pack MP3 audiodeliv est en route 🚀</p>
+
+  <div class="card">
+    <div class="icon-circle">
+      <svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="9 18 15 24 27 12"/>
+      </svg>
+    </div>
+
+    <h1>Paiement réussi</h1>
+    <p class="subtitle">
+      Votre pack MP3 audiodeliv est prêt.<br/>
+      Merci pour votre confiance.
+    </p>
+
+    <div class="download-area">
+      <p>Le lien de téléchargement vous sera envoyé par e-mail.</p>
+      <p class="note">Conservez votre référence de session ci-dessous.</p>
+    </div>
+
+    <div id="sessionInfo" style="display:none;">
+      <p class="session-label">Référence de session</p>
+      <div class="session-id" id="sessionId"></div>
+    </div>
+
+    <a href="/" class="btn btn-primary">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l-7 7h4v6h6V8h4L8 1z"/></svg>
+      Retour à la boutique
+    </a>
+
+    <div>
+      <a href="/" class="logo-link">
+        <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="2" y="2" width="32" height="32" rx="8" stroke="currentColor" stroke-width="2"/>
+          <path d="M12 24V14l12-2v12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="12" cy="24" r="3" fill="currentColor" opacity="0.5"/>
+          <circle cx="24" cy="22" r="3" fill="currentColor" opacity="0.5"/>
+        </svg>
+        audiodeliv
+      </a>
+    </div>
+  </div>
+
   <script>
     const params = new URLSearchParams(window.location.search);
-    console.log('Session ID:', params.get('session_id'));
+    const sessionId = params.get('session_id');
+    if (sessionId) {
+      document.getElementById('sessionInfo').style.display = 'block';
+      document.getElementById('sessionId').textContent = sessionId;
+    }
   </script>
+
 </body>
 </html>

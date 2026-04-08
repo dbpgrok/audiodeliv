@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>audiodeliv – Boutique MP3 sécurisée</title>
+  <meta name="description" content="Pré-écoutez 30s en haute qualité, achetez vos packs MP3 en toute sécurité via Stripe." />
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@400;500;700;800&f[]=satoshi@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Reset & Base ── */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg-deep: #08080e;
+      --bg-surface: #111119;
+      --bg-card: #16161f;
+      --bg-card-hover: #1c1c28;
+      --gold: #d4a843;
+      --gold-light: #e8c76a;
+      --gold-dim: #a17e2e;
+      --text-primary: #f0ece4;
+      --text-secondary: #9a968e;
+      --text-muted: #5e5b55;
+      --danger: #e05252;
+      --radius: 14px;
+      --radius-sm: 8px;
+      --font-display: 'Cabinet Grotesk', Arial, sans-serif;
+      --font-body: 'Satoshi', Arial, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg-deep);
+      color: var(--text-primary);
+      min-height: 100vh;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ── Background Gradient ── */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background:
+        radial-gradient(ellipse 60% 40% at 50% 0%, rgba(212, 168, 67, 0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 50% at 80% 20%, rgba(120, 80, 200, 0.04) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Layout ── */
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* ── Header ── */
+    .site-header {
+      padding: 48px 0 16px;
+      text-align: center;
+    }
+
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .logo svg {
+      width: 36px;
+      height: 36px;
+    }
+
+    .logo-text {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+    }
+
+    .logo-text span {
+      color: var(--gold);
+    }
+
+    .site-tagline {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      max-width: 420px;
+      margin: 0 auto;
+      line-height: 1.5;
+    }
+
+    /* ── Divider ── */
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(212, 168, 67, 0.2), transparent);
+      margin: 32px 0;
+    }
+
+    /* ── Section Title ── */
+    .section-title {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 24px;
+    }
+
+    /* ── Track Grid ── */
+    .tracks-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    @media (min-width: 640px) {
+      .tracks-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    /* ── Track Card ── */
+    .track-card {
+      background: var(--bg-card);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .track-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(212, 168, 67, 0.15);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .track-cover {
+      position: relative;
+      aspect-ratio: 1 / 1;
+      background: var(--bg-surface);
+      overflow: hidden;
+    }
+
+    .track-cover img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .cover-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #1a1528, #0f1a2a);
+    }
+
+    .cover-placeholder svg {
+      width: 48px;
+      height: 48px;
+      opacity: 0.25;
+    }
+
+    .track-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(8px);
+      color: var(--gold);
+      font-family: var(--font-display);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 20px;
+      letter-spacing: 0.04em;
+    }
+
+    .track-info {
+      padding: 16px;
+    }
+
+    .track-title {
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+      line-height: 1.3;
+    }
+
+    .track-artist {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+    }
+
+    .track-price {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--gold);
+      margin-bottom: 14px;
+    }
+
+    /* ── Buttons ── */
+    .track-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn {
+      flex: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 10px 14px;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .btn-preview {
+      background: rgba(212, 168, 67, 0.1);
+      color: var(--gold);
+      border: 1px solid rgba(212, 168, 67, 0.2);
+    }
+
+    .btn-preview:hover {
+      background: rgba(212, 168, 67, 0.18);
+      border-color: rgba(212, 168, 67, 0.35);
+    }
+
+    .btn-preview.playing {
+      background: rgba(212, 168, 67, 0.2);
+      border-color: var(--gold);
+      color: var(--gold-light);
+    }
+
+    .btn-buy {
+      background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+      color: #0a0a0f;
+    }
+
+    .btn-buy:hover {
+      background: linear-gradient(135deg, var(--gold-light), var(--gold));
+      box-shadow: 0 4px 20px rgba(212, 168, 67, 0.3);
+    }
+
+    .btn-buy:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+
+    /* ── Preview Bar ── */
+    .preview-bar {
+      padding: 0 16px 16px;
+      display: none;
+    }
+
+    .preview-bar.active {
+      display: block;
+    }
+
+    .preview-progress {
+      position: relative;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-bottom: 6px;
+    }
+
+    .preview-progress-fill {
+      height: 100%;
+      background: var(--gold);
+      border-radius: 2px;
+      width: 0%;
+      transition: width 0.3s linear;
+    }
+
+    .preview-time {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* ── Footer ── */
+    .site-footer {
+      text-align: center;
+      padding: 48px 0 32px;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+    }
+
+    .site-footer a {
+      color: var(--text-secondary);
+      text-decoration: none;
+    }
+
+    .site-footer a:hover {
+      color: var(--gold);
+    }
+
+    .stripe-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 10px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .stripe-badge svg {
+      width: 14px;
+      height: 14px;
+      opacity: 0.5;
+    }
+
+    /* ── Loading State ── */
+    .loading-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(8, 8, 14, 0.85);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .loading-overlay.visible {
+      display: flex;
+    }
+
+    .loader {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .spinner {
+      width: 36px;
+      height: 36px;
+      border: 3px solid rgba(212, 168, 67, 0.15);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loader-text {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    /* ── Error Toast ── */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--bg-card);
+      border: 1px solid rgba(224, 82, 82, 0.3);
+      color: var(--text-primary);
+      padding: 12px 20px;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      z-index: 200;
+      opacity: 0;
+      transition: all 0.3s ease;
+      max-width: 90%;
+      text-align: center;
+    }
+
+    .toast.visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 480px) {
+      .site-header { padding: 32px 0 12px; }
+      .logo-text { font-size: 1.35rem; }
+      .site-tagline { font-size: 0.85rem; }
+      .track-actions { flex-direction: column; }
+    }
+
+    /* ── Security: disable context menu on audio ── */
+    audio { pointer-events: none; position: absolute; opacity: 0; }
+  </style>
+</head>
+<body>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loader">
+      <div class="spinner"></div>
+      <span class="loader-text">Redirection vers le paiement...</span>
+    </div>
+  </div>
+
+  <!-- Error Toast -->
+  <div class="toast" id="errorToast"></div>
+
+  <div class="container">
+
+    <!-- Header -->
+    <header class="site-header">
+      <div class="logo">
+        <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="audiodeliv logo">
+          <rect x="2" y="2" width="32" height="32" rx="8" stroke="currentColor" stroke-width="2" fill="none"/>
+          <path d="M12 24V14l12-2v12" stroke="#d4a843" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          <circle cx="12" cy="24" r="3" fill="#d4a843" opacity="0.8"/>
+          <circle cx="24" cy="22" r="3" fill="#d4a843" opacity="0.8"/>
+        </svg>
+        <span class="logo-text">audio<span>deliv</span></span>
+      </div>
+      <p class="site-tagline">
+        Pré-écoutez 30s en haute qualité &middot; Paiement Stripe sécurisé
+      </p>
+    </header>
+
+    <div class="divider"></div>
+
+    <!-- Tracks Section -->
+    <section>
+      <h2 class="section-title">Packs disponibles</h2>
+
+      <div class="tracks-grid" id="tracksGrid">
+
+        <!-- Track Card 1 -->
+        <article class="track-card" data-track-id="1" data-audio-src="/audio/demo-track.mp3">
+          <div class="track-cover">
+            <div class="cover-placeholder">
+              <svg viewBox="0 0 48 48" fill="none"><path d="M18 34V16l16-3v18" stroke="#d4a843" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="18" cy="34" r="4" fill="#d4a843" opacity="0.5"/><circle cx="34" cy="31" r="4" fill="#d4a843" opacity="0.5"/></svg>
+            </div>
+            <span class="track-badge">MP3 HQ</span>
+          </div>
+          <div class="track-info">
+            <h3 class="track-title">Pack MP3 audiodeliv</h3>
+            <p class="track-artist">audiodeliv</p>
+            <p class="track-price">5,00 &euro;</p>
+            <div class="track-actions">
+              <button class="btn btn-preview" onclick="togglePreview(this)" aria-label="Écouter un extrait de 30 secondes">
+                <svg viewBox="0 0 16 16" fill="currentColor"><polygon points="4,2 14,8 4,14"/></svg>
+                <span>Écouter 30s</span>
+              </button>
+              <button class="btn btn-buy" onclick="buyTrack()" aria-label="Acheter ce pack">
+                <svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 1h2.5l1.2 6.4a1.5 1.5 0 001.5 1.1h5.6a1.5 1.5 0 001.4-1l1.8-4.4H4.5"/><circle cx="6" cy="13" r="1.2"/><circle cx="12.5" cy="13" r="1.2"/></svg>
+                <span>Acheter</span>
+              </button>
+            </div>
+          </div>
+          <div class="preview-bar" id="previewBar-1">
+            <div class="preview-progress">
+              <div class="preview-progress-fill" id="progressFill-1"></div>
+            </div>
+            <div class="preview-time" id="previewTime-1">0:00 / 0:30</div>
+          </div>
+        </article>
+
+        <!-- More track cards can be duplicated here -->
+
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+      <p>&copy; 2026 audiodeliv &middot; Tous droits réservés</p>
+      <div class="stripe-badge">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 12.5a5.5 5.5 0 110-11 5.5 5.5 0 010 11zM7 5h2v4H7V5zm0 5h2v1.5H7V10z"/></svg>
+        Paiement sécurisé par Stripe
+      </div>
+    </footer>
+
+  </div>
+
+  <script>
+    /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+       audiodeliv – Frontend v1
+       Pré-écoute 30s + Stripe Checkout
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+    const PREVIEW_DURATION = 30; // secondes max
+    let currentAudio = null;
+    let currentButton = null;
+    let currentTrackId = null;
+    let previewInterval = null;
+
+    // ── Blob cache pour éviter de re-télécharger ──
+    const blobCache = {};
+
+    // ── Charger l'audio de façon sécurisée via fetch + Blob ──
+    async function loadAudioBlob(src) {
+      if (blobCache[src]) return blobCache[src];
+      try {
+        const response = await fetch(src);
+        if (!response.ok) throw new Error('Fichier audio introuvable');
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        blobCache[src] = url;
+        return url;
+      } catch (err) {
+        console.error('Erreur chargement audio:', err);
+        showToast('Impossible de charger l\'extrait audio.');
+        return null;
+      }
+    }
+
+    // ── Stop le lecteur actif ──
+    function stopCurrent() {
+      if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+        currentAudio = null;
+      }
+      if (previewInterval) {
+        clearInterval(previewInterval);
+        previewInterval = null;
+      }
+      if (currentButton) {
+        currentButton.classList.remove('playing');
+        const span = currentButton.querySelector('span');
+        const svg = currentButton.querySelector('svg');
+        if (span) span.textContent = 'Écouter 30s';
+        if (svg) svg.innerHTML = '<polygon points="4,2 14,8 4,14"/>';
+      }
+      if (currentTrackId) {
+        const bar = document.getElementById('previewBar-' + currentTrackId);
+        const fill = document.getElementById('progressFill-' + currentTrackId);
+        const time = document.getElementById('previewTime-' + currentTrackId);
+        if (bar) bar.classList.remove('active');
+        if (fill) fill.style.width = '0%';
+        if (time) time.textContent = '0:00 / 0:30';
+      }
+      currentTrackId = null;
+    }
+
+    // ── Toggle preview ──
+    async function togglePreview(btn) {
+      const card = btn.closest('.track-card');
+      const trackId = card.dataset.trackId;
+      const audioSrc = card.dataset.audioSrc;
+
+      // Si même track en lecture → stop
+      if (currentTrackId === trackId && currentAudio && !currentAudio.paused) {
+        stopCurrent();
+        return;
+      }
+
+      // Stop autre track
+      stopCurrent();
+
+      // Charger l'audio
+      btn.classList.add('playing');
+      const span = btn.querySelector('span');
+      if (span) span.textContent = 'Chargement...';
+
+      const blobUrl = await loadAudioBlob(audioSrc);
+      if (!blobUrl) {
+        btn.classList.remove('playing');
+        if (span) span.textContent = 'Écouter 30s';
+        return;
+      }
+
+      // Créer l'audio
+      const audio = new Audio(blobUrl);
+      audio.volume = 0.8;
+      currentAudio = audio;
+      currentButton = btn;
+      currentTrackId = trackId;
+
+      // UI
+      const svg = btn.querySelector('svg');
+      if (span) span.textContent = 'Pause';
+      if (svg) svg.innerHTML = '<rect x="3" y="2" width="3.5" height="12" rx="1"/><rect x="9.5" y="2" width="3.5" height="12" rx="1"/>';
+
+      const bar = document.getElementById('previewBar-' + trackId);
+      const fill = document.getElementById('progressFill-' + trackId);
+      const timeDisplay = document.getElementById('previewTime-' + trackId);
+      if (bar) bar.classList.add('active');
+
+      // Timer 30s
+      audio.play().catch(err => {
+        console.error('Lecture impossible:', err);
+        showToast('Impossible de lire l\'extrait.');
+        stopCurrent();
+      });
+
+      previewInterval = setInterval(() => {
+        if (!currentAudio) { clearInterval(previewInterval); return; }
+        const elapsed = Math.min(currentAudio.currentTime, PREVIEW_DURATION);
+        const pct = (elapsed / PREVIEW_DURATION) * 100;
+        if (fill) fill.style.width = pct + '%';
+        if (timeDisplay) {
+          const m = Math.floor(elapsed / 60);
+          const s = Math.floor(elapsed % 60).toString().padStart(2, '0');
+          timeDisplay.textContent = m + ':' + s + ' / 0:30';
+        }
+        // Couper à 30s
+        if (currentAudio.currentTime >= PREVIEW_DURATION) {
+          stopCurrent();
+        }
+      }, 250);
+
+      // Fin naturelle (si fichier < 30s)
+      audio.addEventListener('ended', () => stopCurrent());
+    }
+
+    // ── Achat Stripe ──
+    async function buyTrack() {
+      const overlay = document.getElementById('loadingOverlay');
+      overlay.classList.add('visible');
+
+      try {
+        const res = await fetch('/api/create-checkout-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        const data = await res.json();
+
+        if (data.url) {
+          window.location.href = data.url;
+        } else {
+          throw new Error(data.error || 'Erreur lors de la création de la session');
+        }
+      } catch (err) {
+        console.error('Erreur Stripe:', err);
+        overlay.classList.remove('visible');
+        showToast('Erreur de paiement. Veuillez réessayer.');
+      }
+    }
+
+    // ── Toast notifications ──
+    function showToast(msg) {
+      const toast = document.getElementById('errorToast');
+      toast.textContent = msg;
+      toast.classList.add('visible');
+      setTimeout(() => toast.classList.remove('visible'), 4000);
+    }
+
+    // ── Sécurité basique ──
+    document.addEventListener('contextmenu', (e) => {
+      if (e.target.closest('.track-card')) e.preventDefault();
+    });
+
+    // Empêcher le drag sur les covers
+    document.querySelectorAll('.track-cover img').forEach(img => {
+      img.addEventListener('dragstart', e => e.preventDefault());
+    });
+  </script>
+
+</body>
+</html>
